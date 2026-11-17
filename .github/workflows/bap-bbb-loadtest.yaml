@@ -12,14 +12,14 @@ jobs:
       versionName: ${{ steps.versionName.outputs.tag }}
     steps:
       - name: Filter Tag name
-        uses: olegtarasov/get-tag@v2.1
+        uses: olegtarasov/get-tag@53af8e1e538a0ffab949cdde3e332d8e58e8630f # v2.1
         id: tagName
         with:
           tagRegex: "(.+?(?=-[0-9]))"
           tagRegexGroup: 1
 
       - name: Filter Version name
-        uses: olegtarasov/get-tag@v2.1
+        uses: olegtarasov/get-tag@53af8e1e538a0ffab949cdde3e332d8e58e8630f # v2.1
         id: versionName
         with:
           tagRegex: "${{ steps.tagName.outputs.tag }}-(.*)"
@@ -27,10 +27,11 @@ jobs:
 
   build_and_push:
     needs: pre_build
-    uses: hpi-schul-cloud/infra-tools/.github/workflows/build-and-push.yaml@master
+    uses: dbildungsplattform/dbp-github-workflows/.github/workflows/image-publish-trivy.yaml@ac540af7a37263a102c7bc6c8c9447a7b176f027 # 8.6.0
     with:
-      registry: ghcr.io
-      image: dbildungsplattform/${{ needs.pre_build.outputs.tagName }}
-      tag: ${{ needs.pre_build.outputs.versionName }}
+      container_registry: "ghcr.io"
+      image_name: "${{ needs.pre_build.outputs.tagName }}"
+      image_tag_generation: "specified,mm_git_tag"
+      image_tag: "${{ needs.pre_build.outputs.versionName }}"
       context: ./infrastructure/${{ needs.pre_build.outputs.tagName }}/
   
